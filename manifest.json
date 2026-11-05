@@ -1,17 +1,39 @@
 {
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "/daily-news-briefing/",
   "name": "Daily News Briefing",
   "short_name": "Daily News",
   "description": "Personal multi-source broadsheet reader synced with Google Drive JSON editions.",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#0b0f19",
   "theme_color": "#0f172a",
   "icons": [
     {
-      "src": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 128 128\"><rect width=\"128\" height=\"128\" rx=\"24\" fill=\"%230f172a\"/><rect x=\"10\" y=\"10\" width=\"108\" height=\"108\" rx=\"18\" fill=\"%231e293b\" stroke=\"%233b82f6\" stroke-width=\"4\"/><text x=\"64\" y=\"84\" font-family=\"Georgia, serif\" font-size=\"68\" font-weight=\"bold\" fill=\"%2360a5fa\" text-anchor=\"middle\">N</text></svg>",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

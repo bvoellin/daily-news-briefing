@@ -11,6 +11,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <link rel="apple-touch-icon" href="./icon-192.png">
   <style>
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -137,6 +140,12 @@
       <!-- Toggle Toolbar Button (Gear Icon) -->
       <button type="button" id="toggleHeaderBtn" class="inline-flex items-center justify-center w-8 h-7 rounded-md text-xs font-semibold bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all shrink-0" title="Settings, Topics &amp; Tools">
         <span id="toggleHeaderIcon">⚙️</span>
+      </button>
+
+      <!-- Install App Nav Button -->
+      <button type="button" id="installPwaNavBtn" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-600/25 hover:bg-blue-600 text-blue-300 hover:text-white border border-blue-500/40 transition-all shrink-0" title="Install Daily News Briefing as an App">
+        <span>📲</span>
+        <span class="hidden sm:inline">Install App</span>
       </button>
 
       <!-- On-Demand Refresh Nav Button -->
@@ -3350,6 +3359,52 @@ ${cardsHtml}
         } else {
           updateCloudBadge("Set GAS URL to Sync", "unconfigured");
         }
+
+                // Service Worker & PWA Install Management
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", function () {
+            navigator.serviceWorker
+              .register("./sw.js")
+              .then(function (reg) {
+                console.log("Service Worker registered:", reg.scope);
+              })
+              .catch(function (err) {
+                console.warn("Service Worker registration error:", err);
+              });
+          });
+        }
+
+        var deferredPrompt = null;
+        var installBtn = document.getElementById("installPwaNavBtn");
+        window.addEventListener("beforeinstallprompt", function (e) {
+          e.preventDefault();
+          deferredPrompt = e;
+          if (installBtn) {
+            installBtn.classList.remove("hidden");
+            installBtn.className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white border border-blue-500 shadow-sm transition-all shrink-0 animate-pulse";
+          }
+        });
+
+        if (installBtn) {
+          installBtn.addEventListener("click", async function () {
+            if (deferredPrompt) {
+              deferredPrompt.prompt();
+              var choice = await deferredPrompt.userChoice;
+              if (choice && choice.outcome === "accepted") {
+                installBtn.classList.add("hidden");
+                showToast("App installing to your device...", "📲");
+              }
+              deferredPrompt = null;
+            } else {
+              showToast("If prompt does not appear: tap your browser menu (⋮ / Share) -> 'Install App' or 'Add to Home screen'.", "📲");
+            }
+          });
+        }
+
+        window.addEventListener("appinstalled", function () {
+          if (installBtn) installBtn.classList.add("hidden");
+          showToast("Daily News Briefing installed!", "🎉");
+        });
 
         // Navigation Tabs
         ["tabReaderBtn", "tabVaultBtn", "tabPrefsBtn", "tabJsonBtn"].forEach(function (btnId) {
